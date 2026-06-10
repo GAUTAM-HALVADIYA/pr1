@@ -5,6 +5,7 @@ import dbConnection from "./config/connection";
 import roleRouter from "./routes/role.route";
 import userRouter from "./routes/user.route";
 import authRouter from "./routes/auth.route";
+import profileRouter from "./routes/profile.route";
 
 const app = express();
 const PORT = 3000;
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/api/roles", roleRouter);
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/profile", profileRouter);
 
 console.log("ROUTE LOADED");
 
