@@ -13,7 +13,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
         const token = authHeader.split(" ")[1];
         const decoded: any = verifyAccessToken(token);
-
+        
         const user = await userModel.findById(decoded.id).populate("role");
         if (!user) {
             res.status(401).json({ success: false, message: "User not found" });

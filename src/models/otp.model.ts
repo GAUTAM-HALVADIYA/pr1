@@ -12,12 +12,6 @@ const otpSchema = new mongoose.Schema({
         required: true,
     },
 
-    purpose: {
-        type: String,
-        required: true,
-        enum: ["REGISTER", "LOGIN", "FORGOT_PASSWORD"],
-    },
-
     expiresAt: {
         type: Date,
         required: true,
@@ -29,6 +23,6 @@ const otpSchema = new mongoose.Schema({
     },
 });
 
-const otpModel = mongoose.model("Otp", otpSchema)
+const otpModel = mongoose.model("Otp", otpSchema);
 
-export default otpModel
+export default otpModel;

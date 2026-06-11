@@ -1,13 +1,48 @@
 import { Request, Response } from "express";
 import profileModel from "../models/profile.model";
 
-export const getProfile = async (req: Request, res: Response): Promise<void> => {
+export const createProfile = async (
+    req: Request,
+    res: Response,
+): Promise<void> => {
     try {
         const userId = req.user._id;
-        const profile = await profileModel.findOne({ user: userId }).populate("user", "name email");
-        
+        const existProfile = await profileModel.findOne({ user: userId });
+
+        if (existProfile) {
+            res.status(404).json({
+                success: false,
+                message: "Profile is exist",
+            });
+            return;
+        }
+        req.body.user = userId;
+        const profile = await profileModel.create(req.body);
+        res.status(201).json({
+            success: true,
+            message: "Profile created successfully",
+            data: profile,
+        });
+    } catch (error: any) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const getProfile = async (
+    req: Request,
+    res: Response,
+): Promise<void> => {
+    try {
+        const userId = req.user._id;
+        const profile = await profileModel
+            .findOne({ user: userId })
+            .populate("user", "name email");
+
         if (!profile) {
-            res.status(404).json({ success: false, message: "Profile not found" });
+            res.status(404).json({
+                success: false,
+                message: "Profile not found",
+            });
             return;
         }
 
@@ -17,7 +52,10 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
     }
 };
 
-export const updateProfile = async (req: Request, res: Response): Promise<void> => {
+export const updateProfile = async (
+    req: Request,
+    res: Response,
+): Promise<void> => {
     try {
         const userId = req.user._id;
         const { bio, address, dob, avatar } = req.body;
@@ -30,7 +68,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
                 bio,
                 address,
                 dob,
-                avatar
+                avatar,
             });
         } else {
             if (bio !== undefined) profile.bio = bio;
@@ -40,7 +78,33 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
             await profile.save();
         }
 
-        res.status(200).json({ success: true, message: "Profile updated successfully", data: profile });
+        res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
+            data: profile,
+        });
+    } catch (error: any) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const deleteProfile = async (
+    req: Request,
+    res: Response,
+): Promise<void> => {
+    try {
+        const userId = req.user._id;
+        const profile = await profileModel.findOne({ user: userId });
+
+        if (!profile) {
+            res.status(404).json({
+                success: false,
+                message: "Profile not found",
+            });
+            return;
+        }
+        const deletedProfile = await profileModel.findByIdAndDelete(profile._id)
+        res.status(200).json({ success: true, data: deletedProfile });
     } catch (error: any) {
         res.status(500).json({ success: false, message: error.message });
     }

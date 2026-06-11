@@ -30,7 +30,7 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
         const targetUserId = req.params.id;
         const targetUser = await userModel.findById(targetUserId).populate("role");
 
-        if (!targetUser) {
+        if (!targetUser) { 
             res.status(404).json({ success: false, message: "User not found" });
             return;
         }
